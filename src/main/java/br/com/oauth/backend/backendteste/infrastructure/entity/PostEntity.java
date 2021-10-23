@@ -1,8 +1,6 @@
 package br.com.oauth.backend.backendteste.infrastructure.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +11,7 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
 public class PostEntity {
 
     @Id
@@ -21,5 +20,8 @@ public class PostEntity {
     private String obs;
     private Boolean privatePost;
     private String url;
+    private Long userId;
 
+    public PostEntity() {
+    }
 }

@@ -3,6 +3,7 @@ package br.com.oauth.backend.backendteste.api.rest.v1;
 import br.com.oauth.backend.backendteste.api.rest.v1.request.PostRequest;
 import br.com.oauth.backend.backendteste.api.rest.v1.response.FileInfoResponse;
 import br.com.oauth.backend.backendteste.api.rest.v1.response.MessageResponse;
+import br.com.oauth.backend.backendteste.api.rest.v1.response.PostResponse;
 import br.com.oauth.backend.backendteste.domain.business.service.FilesStorageService;
 import br.com.oauth.backend.backendteste.domain.business.service.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -59,6 +60,37 @@ public class PostController {
         Resource file = storageService.load(filename);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<PostResponse>> getListPostWithFiles() {
+        List<PostResponse> response = postService.getAll()
+                .stream()
+                .filter(postPriv -> !postPriv.getPrivatePost())
+                .map(all -> {
+                    Resource file = storageService.load(all.getUrl());
+                    all.setUrl(MvcUriComponentsBuilder
+                            .fromMethodName(PostController.class, "getFile", file.getFilename()).build().toString());
+                    all.setName(file.getFilename());
+                    return all;
+                }).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @GetMapping("/private/all")
+    public ResponseEntity<List<PostResponse>> getListPostPrivateWithFiles() {
+        List<PostResponse> response = postService.getByUserId()
+                .stream()
+                .map(all -> {
+                    Resource file = storageService.load(all.getUrl());
+                    all.setUrl(MvcUriComponentsBuilder
+                            .fromMethodName(PostController.class, "getFile", file.getFilename()).build().toString());
+                    all.setName(file.getFilename());
+                    return all;
+                }).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
 }

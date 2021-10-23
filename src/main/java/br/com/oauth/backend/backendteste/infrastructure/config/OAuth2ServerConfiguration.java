@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -52,6 +51,7 @@ public class OAuth2ServerConfiguration {
                     .antMatchers("/swagger-resources/**").permitAll()
                     .antMatchers("/configuration/security").permitAll()
                     .antMatchers("/webjars/**").permitAll()
+                    .antMatchers("/post/all").permitAll()
                     .anyRequest().fullyAuthenticated()
                     .antMatchers(HttpMethod.OPTIONS, "/**").permitAll();
         }
